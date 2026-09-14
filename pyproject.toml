@@ -40,3 +40,6 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
+
+[project.scripts]
+dev = "app.cli:dev"

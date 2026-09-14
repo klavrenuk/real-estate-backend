@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     app_name: str = "Real Estate API"
     debug: bool = False
     api_v1_prefix: str = "/api/v1"
+    port: int = 8000
 
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/real_estate"
 
