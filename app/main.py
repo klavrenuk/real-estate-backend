@@ -6,7 +6,9 @@ from sqlalchemy import text
 
 from app.core.config import get_settings
 from app.core.database import Base, engine
+
 from app.modules.auth.api import router as auth_router
+from app.modules.listings.api import router as listening_router
 
 settings = get_settings()
 
@@ -21,6 +23,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
 
 app.include_router(auth_router, prefix=settings.api_v1_prefix)
+app.include_router(listening_router, prefix=settings.api_v1_prefix)
 
 
 app.add_middleware(
