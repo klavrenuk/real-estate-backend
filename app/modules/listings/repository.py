@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.listings.model import Listing
 from app.modules.listings.schemas import ListingCreate
 
-async def create_listening(db:AsyncSession, payload:ListingCreate) -> ListingCreate:
+async def create_listing (db:AsyncSession, payload:ListingCreate) -> ListingCreate:
     listing = Listing(payload.model_dump())
     db.add()
 
@@ -14,4 +14,5 @@ async def create_listening(db:AsyncSession, payload:ListingCreate) -> ListingCre
 
 
 async def get_all(db:AsyncSession) -> list[Listing]:
-    return await db.query(Listing).all()
+    items = await db.execute(select(Listing).order_by(Listing.id.desc()))
+    return items.scalars().all()
