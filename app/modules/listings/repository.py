@@ -5,8 +5,8 @@ from app.modules.listings.model import Listing
 from app.modules.listings.schemas import ListingCreate
 
 async def create_listing (db:AsyncSession, payload:ListingCreate) -> ListingCreate:
-    listing = Listing(payload.model_dump())
-    db.add()
+    listing = Listing(**payload.model_dump())  # распаковка dict в именованные аргументы Listing
+    db.add(listing)
 
     await db.commit()
     await db.refresh(listing)

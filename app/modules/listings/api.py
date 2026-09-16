@@ -25,12 +25,10 @@ async def get_listing(id:int, db: DbSession) -> ListingOut:
 
     }
 
-@router.post('/')
+@router.post('/', response_model=ListingOut, status_code=status.HTTP_201_CREATED)
 async def create_listings(payload:ListingCreate, db: DbSession) -> ListingOut:
-    new_listening = create_listing (db, payload)
-    return {
-        'listening': new_listening
-    }
+    new_listening = await create_listing (db, payload)
+    return ListingOut.model_validate(new_listening)
 
 @router.patch('/{id}')
 async def update_listing(id:int, db:DbSession) -> ListingOut:
