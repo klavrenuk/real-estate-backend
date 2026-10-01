@@ -117,9 +117,11 @@ alembic check                 # есть ли расхождения между 
 
 ## Проверка
 
-- Swagger UI: http://127.0.0.1:8002/docs
-- ReDoc: http://127.0.0.1:8002/redoc
-- Health: http://127.0.0.1:8002/health
+- Swagger UI: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+- Health: http://127.0.0.1:8000/health
+
+Порт по умолчанию `8000` (`Settings.port`). Чтобы сменить — добавь `PORT=8002` в `.env`.
 
 ## Линт и тесты
 
