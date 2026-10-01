@@ -22,6 +22,11 @@ app/
 │       ├── model.py        # SQLAlchemy-модель (таблица users)
 │       └── schemas.py      # Pydantic-схемы (контракты данных)
 └── main.py             # FastAPI-приложение, lifespan, подключение роутеров
+
+alembic.ini             # конфиг Alembic (URL берётся из .env, см. migrations/env.py)
+migrations/
+├── env.py              # async-конфигурация, автоимпорт всех app/modules/*/model.py
+└── versions/           # сами миграции
 ```
 
 Архитектура — модульный монолит (feature-first): деление по доменам, внутри каждого модуля слои. Модули общаются через сервисный слой, общий `core/` переиспользуют все.
@@ -78,8 +83,37 @@ api.py (роутер)
 ```bash
 uv sync                       # создать .venv и установить зависимости
 cp .env.example .env          # вписать реальные DATABASE_URL и SECRET_KEY
+alembic upgrade head          # применить миграции к БД
 uv run dev                    # запуск в dev-режиме (порт берётся из .env)
 ```
+
+## Миграции (Alembic)
+
+Схема БД управляется только Alembic. Приложение **не** создаёт таблицы само
+(в `lifespan` нет `create_all`), поэтому после клона нужно один раз прогнать миграции.
+
+URL для миграций берётся из `app.core.config` → `.env`, в `alembic.ini` он пустой намеренно:
+иначе миграции могли бы пойти в одну БД, а приложение — в другую.
+
+```bash
+alembic upgrade head          # применить миграции
+alembic downgrade -1          # откатить последнюю
+alembic current               # на какой ревизии сейчас БД
+alembic history               # список миграций
+alembic revision --autogenerate -m "add users table"   # создать миграцию
+alembic check                 # есть ли расхождения между моделями и БД
+```
+
+Рабочий цикл: изменил модель → `alembic revision --autogenerate -m "..."` →
+посмотри глазами сгенерированный файл в `migrations/versions/` →
+`alembic upgrade head`.
+
+`migrations/env.py` сам импортирует все `app/modules/*/model.py`, поэтому новая модель
+подхватывается автогенерацией автоматически. Учти: для этого каждая папка модуля
+должна содержать `__init__.py`, иначе пакет не будет найден.
+
+> `alembic revision --autogenerate` сравнивает модели с **текущей** БД. Если таблицы
+> ещё не создавались, диф будет пустым — сначала сделай `alembic upgrade head` на чистой базе.
 
 ## Проверка
 

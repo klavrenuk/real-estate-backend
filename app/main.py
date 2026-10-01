@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.core.config import get_settings
-from app.core.database import Base, engine
+from app.core.database import engine
 
 from app.modules.auth.api import router as auth_router
 from app.modules.listings.api import router as listening_router
@@ -15,8 +15,8 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    # Схема БД управляется Alembic (migrations/), а не create_all.
+    # Локальный запуск: alembic upgrade head
     yield
 
 

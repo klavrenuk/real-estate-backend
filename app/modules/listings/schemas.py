@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, ConfigDict
 class ListingCreate(BaseModel):
     name: str = Field(min_length=3, max_length=255)
     price: int = Field(gt=0)
-    phone: str = Field(min_length=5, max_length=255),
+    phone: str = Field(min_length=5, max_length=255)
     description: str = Field()
 
 
