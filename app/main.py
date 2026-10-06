@@ -9,6 +9,7 @@ from app.core.database import engine
 
 from app.modules.auth.api import router as auth_router
 from app.modules.listings.api import router as listening_router
+from app.modules.favorites.api import router as favorites_router
 
 settings = get_settings()
 
@@ -24,7 +25,7 @@ app = FastAPI(title=settings.app_name, debug=settings.debug, lifespan=lifespan)
 
 app.include_router(auth_router, prefix=settings.api_v1_prefix)
 app.include_router(listening_router, prefix=settings.api_v1_prefix)
-
+app.include_router(favorites_router, prefix=settings.api_v1_prefix)
 
 app.add_middleware(
     CORSMiddleware,
@@ -33,6 +34,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/health", tags=["health"])
 async def health() -> dict[str, str]:
