@@ -6,6 +6,11 @@ class FavoriteOut(BaseModel):
     listing_id: int
 
 
+class FavoriteDelete(BaseModel):
+    user_id: int
+    listing_id: int
+
+
 class FavoriteCreate(BaseModel):
     user_id: int
     listing_id: int

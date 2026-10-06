@@ -4,8 +4,8 @@ from typing import Annotated
 
 from app.core.database import get_db
 
-from app.modules.favorites.schemas import FavoriteOut, FavoriteCreate
-from app.modules.favorites.service import get_by_user, create_favorite
+from app.modules.favorites.schemas import FavoriteOut, FavoriteCreate, FavoriteDelete
+from app.modules.favorites.service import get_by_user, create_favorite, delete_favorite_from_user
 
 router = APIRouter(prefix='/favorites')
 
@@ -18,5 +18,10 @@ async def api_get_favorites_list_by_users(db: DbSession) -> list[FavoriteOut]:
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
-async def api_create_favorite(payload: FavoriteCreate, db: DbSession) -> bool:
+async def api_create_favorite(db: DbSession, payload: FavoriteCreate) -> bool:
     return await create_favorite(db, payload.user_id, payload.listing_id)
+
+
+@router.delete('/', status_code=status.HTTP_200_OK)
+async def api_delete_favorite_from_user(db: DbSession, payload: FavoriteDelete) -> bool:
+    return await delete_favorite_from_user(db, payload.user_id, payload.listing_id)

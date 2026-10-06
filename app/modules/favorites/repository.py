@@ -19,3 +19,19 @@ async def create(db: AsyncSession, user_id: int, listing_id: int) -> Favorite:
     await db.commit()
     await db.refresh(favorite)
     return favorite
+
+
+async def get_by_user_and_listing(db: AsyncSession, user_id: int, listing_id: int) -> Favorite | None:
+    favorite = await db.execute(
+        select(Favorite).where(
+            Favorite.user_id == user_id,
+            Favorite.listing_id == listing_id
+        )
+    )
+
+    return favorite.scalar_one_or_none()
+
+
+async def delete(db: AsyncSession, favorite: Favorite):
+    await db.delete(favorite)
+    await db.commit()

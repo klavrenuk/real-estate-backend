@@ -16,3 +16,13 @@ async def create_favorite(db: AsyncSession, user_id: int, listing_id: int) -> bo
     except IntegrityError:
         await db.rollback()
         return False
+
+
+async def delete_favorite_from_user(db: AsyncSession, user_id: int, listing_id: int) -> bool:
+    favorite = await repository.get_by_user_and_listing(db, user_id, listing_id)
+
+    if favorite is None:
+        return True
+
+    await repository.delete(db, favorite)
+    return True
