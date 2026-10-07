@@ -16,8 +16,7 @@ async def create(db: AsyncSession, user_id: int, listing_id: int) -> Favorite:
     favorite = Favorite(user_id=user_id, listing_id=listing_id)
     db.add(favorite)
 
-    await db.commit()
-    await db.refresh(favorite)
+    await db.flush()
     return favorite
 
 
@@ -33,5 +32,12 @@ async def get_by_user_and_listing(db: AsyncSession, user_id: int, listing_id: in
 
 
 async def delete(db: AsyncSession, favorite: Favorite):
-    await db.delete(favorite)
-    await db.commit()
+    result = await db.execute(
+        delete(Favorite).where(
+            Favorite.user_id == favorite.user_id,
+            Favorite.listing_id == favorite.listing_id,
+        )
+    )
+
+    await db.flush()
+    return result.rowcount > 0
